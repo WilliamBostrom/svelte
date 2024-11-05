@@ -2,8 +2,8 @@
   import  Button from "./lib/Button.svelte"
 </script>
 
-<Button size='large' shadow>Button Text</Button>
-<Button size='small' >Button Text</Button>
+<Button size='large' bgColor="red" textColor="white">Button Text</Button>
+<Button size='small' shadow></Button>
 
 <style>
 
