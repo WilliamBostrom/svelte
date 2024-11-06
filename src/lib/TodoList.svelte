@@ -1,35 +1,42 @@
-<script>
-   import { v4 as uuid } from "uuid"
-  import Button from "./Button.svelte"
-  export let todos = [];
+<svelte:options immutable={true}/>
 
+<script>
+  import Button from "./Button.svelte"
+  import {createEventDispatcher} from "svelte"
+
+  export let todos = [];
   let inputText = '';
 
-  function handleAddTodo(){
-    if(!inputText) return;
-    // todos.push({
-    //   id: uuid(),
-    //   title: inputText,
-    //   completed: false
-    // });
-    // todos = todos;
-    
-    todos = [...todos, {
-      id: uuid(),
-      title: inputText,
-      completed: false
-    }];
+  const dispatch = createEventDispatcher()
 
-    inputText = ""
+  function handleAddTodo(){
+    const isNotCancelled = dispatch('addtodo', {
+      title: inputText
+    }, {cancelable: true});
+    if(isNotCancelled) {
+      inputText = '';
+    }
+  }
+
+  function handleRemoveTodo(id){
+    dispatch('removetodo', {
+      id
+    })
+
   }
 </script>
 
 <div class="todo-list-wrapper">
 
 <ul>
-{#each todos as  {id, title}, index (id)}
-  {@const num = index + 1}
-  <li>{num}: {title}</li>
+{#each todos as  {id, title, completed}}
+
+  <li><label>
+    <input type="checkbox" checked={completed}/>
+    
+    {title}</label> 
+    <button on:click={() => handleRemoveTodo(id)}>Remove</button>
+  </li>
 {/each}
 </ul>
 <form class="add-todo-form"

@@ -20,15 +20,28 @@
       completed: true
     },
   ]
-  $: console.log(todos);
+
+  function handleAddTodo(e){
+    // e.preventDefault();
+    todos = [...todos, {
+      id: uuid(),
+      title: e.detail.title,
+      completed: false,
+    }];
+  }
+
+  function handleRemoveTodo(event){
+    todos = todos.filter(t => t.id !== event.detail.id )
+  }
+
 </script>
 
-<h2>{todos.length} Todos</h2>
-<TodoList bind:todos />
+<TodoList {todos} 
+on:addtodo={handleAddTodo}
+on:removetodo={handleRemoveTodo}
+/>
 
-<button on:click={() => {
-  todos = [];
-}}>Update todos</button>
+
 
 <style>
 
