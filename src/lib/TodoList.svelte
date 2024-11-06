@@ -1,0 +1,41 @@
+<script>
+   import { v4 as uuid } from "uuid"
+  import Button from "./Button.svelte"
+  export let todos = [];
+
+  let inputText = '';
+
+  function handleAddTodo(){
+    if(!inputText) return;
+    // todos.push({
+    //   id: uuid(),
+    //   title: inputText,
+    //   completed: false
+    // });
+    // todos = todos;
+    
+    todos = [...todos, {
+      id: uuid(),
+      title: inputText,
+      completed: false
+    }];
+
+    inputText = ""
+  }
+</script>
+
+<div class="todo-list-wrapper">
+
+<ul>
+{#each todos as  {id, title}, index (id)}
+  {@const num = index + 1}
+  <li>{num}: {title}</li>
+{/each}
+</ul>
+<form class="add-todo-form"
+on:submit|preventDefault={handleAddTodo}>
+  <input bind:value={inputText}/>
+  <Button type="submit" disabled={!inputText}> Add</Button>
+</form>
+
+</div>
