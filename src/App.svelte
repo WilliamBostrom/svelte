@@ -33,12 +33,22 @@
   function handleRemoveTodo(event){
     todos = todos.filter(t => t.id !== event.detail.id )
   }
+  function handleToggleTodo(event){
+    todos = todos.map(todo => {
+   if(todo.id === event.detail.id){
+      return {...todo, completed: event.detail.value};
+   }
+   return {...todo};
+  
+  })
+  }
 
 </script>
 
 <TodoList {todos} 
 on:addtodo={handleAddTodo}
 on:removetodo={handleRemoveTodo}
+on:toggletodo={handleToggleTodo}
 />
 
 
