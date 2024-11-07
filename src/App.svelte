@@ -2,7 +2,11 @@
 
   import TodoList from "./lib/TodoList.svelte"
   import { v4 as uuid } from "uuid"
+import {tick} from "svelte";
+
   
+  let todoList;
+
   let todos = [
     {
       id: uuid(),
@@ -21,13 +25,18 @@
     },
   ]
 
-  function handleAddTodo(e){
-    // e.preventDefault();
-    todos = [...todos, {
+  async function handleAddTodo(e){
+    e.preventDefault();
+ 
+    setTimeout(() => {
+      todos = [...todos, {
       id: uuid(),
       title: e.detail.title,
       completed: false,
     }];
+    }, 300)
+    await tick()
+   todoList.clearInput()
   }
 
   function handleRemoveTodo(event){
@@ -45,12 +54,14 @@
 
 </script>
 
+<div style:max-width="400px">
 <TodoList {todos} 
+bind:this={todoList}
 on:addtodo={handleAddTodo}
 on:removetodo={handleRemoveTodo}
 on:toggletodo={handleToggleTodo}
 />
-
+</div>
 
 
 <style>
