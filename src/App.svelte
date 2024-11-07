@@ -1,7 +1,7 @@
 <script>
-  import TodoList from "./lib/TodoList.svelte";
-  import { v4 as uuid } from "uuid";
-  import { onMount, tick } from "svelte";
+  import { onMount, tick } from 'svelte';
+  import { v4 as uuid } from 'uuid';
+  import TodoList from './lib/TodoList.svelte';
 
   let todoList;
   let todos = null;
@@ -14,16 +14,16 @@
 
   async function loadTodos() {
     isLoading = true;
-    await fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+    await fetch('https://jsonplaceholder.typicode.com/todos?_limit=10')
       .then(async (response) => {
         if (response.ok) {
           todos = await response.json();
         } else {
-          error = "An error has occurred";
+          error = 'An error has occurred';
         }
       })
       .catch((err) => {
-        error = "Failed to load todos.";
+        error = 'Failed to load todos.';
       });
     isLoading = false;
   }
@@ -37,8 +37,8 @@
         {
           id: uuid(),
           title: e.detail.title,
-          completed: false,
-        },
+          completed: false
+        }
       ];
     }, 300);
     await tick();

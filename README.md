@@ -1,10 +1,13 @@
 <<<<<<< HEAD
+
 # svelte-tutorial
+
 All the course files for the Svelete (beginners) playlist on The Net Ninja YouTube channel.
 
 ## How to use
-Each lesson has it's own branch. To see the code for a particular lesson, select that branch from the branch dropdown (top-left).
-=======
+
+# Each lesson has it's own branch. To see the code for a particular lesson, select that branch from the branch dropdown (top-left).
+
 # Svelte + Vite
 
 This template should help get you started developing with Svelte in Vite.
@@ -49,7 +52,20 @@ If you have state that's important to retain within a component, consider creati
 ```js
 // store.js
 // An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+import { writable } from 'svelte/store';
+export default writable(0);
 ```
->>>>>>> cb73d95 (first commit)
+
+> > > > > > > cb73d95 (first commit)
+
+.vscode/settings.json
+{
+"editor.defaultFormatter": "esbenp.prettier-vscode",
+"[svelte]": {
+"editor.defaultFormatter": "svelte.svelte-vscode"
+},
+"editor.formatOnSave": true,
+"editor.codeActionsOnSave": {
+"source.sortImports": "explicit"
+}
+}
