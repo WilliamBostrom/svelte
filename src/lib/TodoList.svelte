@@ -11,14 +11,19 @@ afterUpdate(() => {
 autoscroll = false;
   });
 
-  export let todos = [];
+  export let todos = null;
+  export let error = null;
+  export let isLoading = false;
+  let prevTodos = todos;
   let inputText = '';
   let input, listDiv, autoscroll, listDivScrollHeight;
+
+
   const dispatch = createEventDispatcher()
-  let prevTodos = todos;
+
 
   $: {
-    autoscroll = todos.length > prevTodos.length;
+    autoscroll = todos && prevTodos && todos.length > prevTodos.length;
     prevTodos = todos;
   }
 
@@ -56,34 +61,40 @@ autoscroll = false;
 
 
 <div class="todo-list-wrapper">
+  {#if isLoading}
+    <p class="no-items-text">Loading...</p>
+  {:else if error}
+    <p class="no-items-text">{error}</p>
+  {:else if todos}
     <div class="todo-list" bind:this={listDiv}>
       <div bind:offsetHeight={listDivScrollHeight}>
         {#if todos.length === 0}
         <p class="no-items-text">No todos yet</p>
         {:else}
       <ul>
-{#each todos as  {id, title, completed}}
+      {#each todos as  {id, title, completed}}
 
-  <li class:completed>
-    <label>
-    <input
+      <li class:completed>
+      <label>
+      <input
    
      on:input={(e) => {
       e.currentTarget.checked = completed;
       handleToggleTodo(id, !completed)
-    }} type="checkbox" checked={completed}/>
+      }} type="checkbox" checked={completed}/>
     
-    {title}</label> 
-    <button class="remove-todo-button" aria-label="remove button" 
-    on:click={() => handleRemoveTodo(id)}>
-    <span style:width="10px" style:display="inline-block"><FaRegTrashAlt/></span>
-  </button>
-  </li>
-{/each}
-      </ul>
-      {/if}
+      {title}</label> 
+        <button class="remove-todo-button" aria-label="remove button" 
+        on:click={() => handleRemoveTodo(id)}>
+        <span style:width="10px" style:display="inline-block"><FaRegTrashAlt/></span>
+        </button>
+        </li>
+        {/each}
+       </ul>
+        {/if}
     </div>
     </div>
+  {/if}
   <form class="add-todo-form"
   on:submit|preventDefault={handleAddTodo}>
     <input 
