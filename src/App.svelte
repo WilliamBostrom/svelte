@@ -115,7 +115,8 @@
     on:addtodo={handleAddTodo}
     on:removetodo={handleRemoveTodo}
     on:toggletodo={handleToggleTodo}
-  />
+    let:todo
+  ></TodoList>
 </div>
 
 <style>
