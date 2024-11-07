@@ -16,6 +16,9 @@
   export let todos = null;
   export let error = null;
   export let isLoading = false;
+  export let disableAdding = false;
+  export let disabledItems = [];
+
   let prevTodos = todos;
   let inputText = '';
   let input, listDiv, autoscroll, listDivScrollHeight;
@@ -77,6 +80,7 @@
               <li class:completed>
                 <label>
                   <input
+                    disabled={disabledItems.includes(id)}
                     on:input={(e) => {
                       e.currentTarget.checked = completed;
                       handleToggleTodo(id, !completed);
@@ -88,6 +92,7 @@
                   {title}</label
                 >
                 <button
+                  disabled={disabledItems.includes(id)}
                   class="remove-todo-button"
                   aria-label="remove button"
                   on:click={() => handleRemoveTodo(id)}
@@ -102,8 +107,13 @@
     </div>
   {/if}
   <form class="add-todo-form" on:submit|preventDefault={handleAddTodo}>
-    <input bind:this={input} bind:value={inputText} placeholder="New Todo" />
-    <Button type="submit" disabled={!inputText}>Add</Button>
+    <input
+      disabled={disableAdding || !todos}
+      bind:this={input}
+      bind:value={inputText}
+      placeholder="New Todo"
+    />
+    <Button type="submit" disabled={!inputText || disableAdding || !todos}>Add</Button>
   </form>
 </div>
 
@@ -153,6 +163,10 @@
             right: 10px;
             cursor: pointer;
             display: none;
+            &:disabled {
+              opacity: 0.4;
+              cursor: not-allowed;
+            }
             :global(svg) {
               fill: #bd1414;
             }

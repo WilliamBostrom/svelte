@@ -3,30 +3,34 @@
   export let shadow = true;
   export let textColor = undefined;
   export let bgColor = undefined;
+  export let type;
+  export let disabled;
 
   let isLeftHovered = false;
 </script>
 
-<button 
+<button
   on:click
-  style:--buttonBgColor={bgColor} 
-  style:--buttonTextColor={textColor} 
+  style:--buttonBgColor={bgColor}
+  style:--buttonTextColor={textColor}
   class:size-lg={size === 'large'}
   class:size-sm={size === 'small'}
   class:has-left={$$slots.leftContent}
-  class:shadow={shadow}>
-
+  class:shadow
+  {type}
+  {disabled}
+>
   {#if $$slots.leftContent}
-    <div 
-      class="left-content" 
-      aria-hidden="true" 
-      on:mouseenter={() => isLeftHovered = true} 
-      on:mouseleave={() => isLeftHovered = false}
+    <div
+      class="left-content"
+      aria-hidden="true"
+      on:mouseenter={() => (isLeftHovered = true)}
+      on:mouseleave={() => (isLeftHovered = false)}
     >
-      <slot name="leftContent"/>
+      <slot name="leftContent" />
     </div>
   {/if}
-  
+
   <slot {isLeftHovered}>Fallback</slot>
 </button>
 

@@ -6,7 +6,9 @@
   let todoList;
   let todos = null;
   let isLoading = false;
+  let isAdding = false;
   let error = null;
+  let disabledItems = [];
 
   onMount(() => {
     loadTodos();
@@ -29,32 +31,75 @@
   }
 
   async function handleAddTodo(e) {
+    isAdding = true;
     e.preventDefault();
-
-    setTimeout(() => {
-      todos = [
-        ...todos,
-        {
-          id: uuid(),
-          title: e.detail.title,
-          completed: false
-        }
-      ];
-    }, 300);
-    await tick();
-    todoList.clearInput();
-  }
-
-  function handleRemoveTodo(event) {
-    todos = todos.filter((t) => t.id !== event.detail.id);
-  }
-
-  function handleToggleTodo(event) {
-    todos = todos.map((todo) => {
-      if (todo.id === event.detail.id) {
-        return { ...todo, completed: event.detail.value };
+    await fetch('https://jsonplaceholder.typicode.com/todos', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: e.detail.title,
+        completed: false
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
       }
-      return { ...todo };
+    }).then(async (res) => {
+      if (res.ok) {
+        const todo = await res.json();
+        todos = [...todos, { ...todo, id: uuid() }];
+
+        todoList.clearInput();
+      } else {
+        alert('Some error has occurred');
+      }
+    });
+    isAdding = false;
+    await tick();
+    todoList.focusInput();
+  }
+
+  async function handleRemoveTodo(e) {
+    const id = e.detail.id;
+    if (disabledItems.includes(id)) return;
+    disabledItems = [...disabledItems, id];
+    await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+      method: 'DELETE'
+    }).then((res) => {
+      if (res.ok) {
+        todos = todos.filter((t) => t.id !== e.detail.id);
+      } else {
+        alert('Some error has occurred');
+      }
+    });
+    disabledItems = disabledItems.filter((itemId) => itemId !== id);
+  }
+
+  async function handleToggleTodo(e) {
+    const id = e.detail.id;
+    const value = e.detail.value;
+    if (disabledItems.includes(id)) return;
+    disabledItems = [...disabledItems, id];
+    await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        completed: value
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    }).then(async (res) => {
+      if (res.ok) {
+        const updateTodo = await res.json();
+        todos = todos.map((todo) => {
+          if (todo.id === id) {
+            return updateTodo;
+          }
+          return { ...todo };
+        });
+      } else {
+        alert('Some error has occurred');
+      }
+
+      disabledItems = disabledItems.filter((itemId) => itemId !== id);
     });
   }
 </script>
@@ -64,6 +109,8 @@
     {todos}
     {error}
     {isLoading}
+    {disabledItems}
+    disableAdding={isAdding}
     bind:this={todoList}
     on:addtodo={handleAddTodo}
     on:removetodo={handleRemoveTodo}
