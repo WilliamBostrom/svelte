@@ -81,7 +81,7 @@
               {@const { id, completed, title } = todo}
               <li>
                 <slot {todo} {index} {handleToggleTodo}>
-                  <div transition:scale={{ start: 0.5, duration: 300 }} class:completed>
+                  <div transition:scale|local={{ start: 0.5, duration: 300 }} class:completed>
                     <label>
                       <input
                         disabled={disabledItems.includes(id)}

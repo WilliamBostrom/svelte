@@ -2,7 +2,7 @@
   import { onMount, tick } from 'svelte';
   import { v4 as uuid } from 'uuid';
   import TodoList from './lib/TodoList.svelte';
-
+  import { fly } from 'svelte/transition';
   let todoList;
   let showList = true;
 
@@ -119,6 +119,14 @@
       on:toggletodo={handleToggleTodo}
     />
   </div>
+  {#if todos}
+    <p>
+      Number of todos:
+      {#key todos.length}
+        <span style:display="inline-block" in:fly|local={{ y: -10 }}>{todos.length}</span>
+      {/key}
+    </p>
+  {/if}
 {/if}
 
 <style>
