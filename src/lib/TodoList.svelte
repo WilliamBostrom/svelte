@@ -3,12 +3,11 @@
 <script>
   import { afterUpdate, createEventDispatcher } from 'svelte';
   import FaRegTrashAlt from 'svelte-icons/fa/FaRegTrashAlt.svelte';
+
+  import { scale } from 'svelte/transition';
   import Button from './Button.svelte';
 
   afterUpdate(() => {
-    {
-      listDivScrollHeight;
-    }
     if (autoscroll) listDiv.scrollTo(0, listDivScrollHeight);
     autoscroll = false;
   });
@@ -43,7 +42,9 @@
       {
         title: inputText
       },
-      { cancelable: true }
+      {
+        cancelable: true
+      }
     );
     if (isNotCancelled) {
       inputText = '';
@@ -66,41 +67,42 @@
 
 <div class="todo-list-wrapper">
   {#if isLoading}
-    <p class="no-items-text">Loading...</p>
+    <p class="state-text">Loading...</p>
   {:else if error}
-    <p class="no-items-text">{error}</p>
+    <p class="state-text">{error}</p>
   {:else if todos}
     <div class="todo-list" bind:this={listDiv}>
       <div bind:offsetHeight={listDivScrollHeight}>
         {#if todos.length === 0}
-          <p class="no-items-text">No todos yet</p>
+          <p class="state-text">No todos yet</p>
         {:else}
           <ul>
-            {#each todos as todo (todo.id)}
+            {#each todos as todo, index (todo.id)}
               {@const { id, completed, title } = todo}
               <li>
-                <slot {todo}>
-                  <div class="class:completed">
+                <slot {todo} {index} {handleToggleTodo}>
+                  <div transition:scale={{ start: 0.5, duration: 300 }} class:completed>
                     <label>
                       <input
                         disabled={disabledItems.includes(id)}
-                        on:input={(e) => {
-                          e.currentTarget.checked = completed;
+                        on:input={(event) => {
+                          event.currentTarget.checked = completed;
                           handleToggleTodo(id, !completed);
                         }}
                         type="checkbox"
                         checked={completed}
                       />
-
-                      {title}</label
-                    >
+                      <slot name="title">{title}</slot>
+                    </label>
                     <button
                       disabled={disabledItems.includes(id)}
                       class="remove-todo-button"
-                      aria-label="remove button"
+                      aria-label="Remove todo: {title}"
                       on:click={() => handleRemoveTodo(id)}
                     >
-                      <span style:width="10px" style:display="inline-block"><FaRegTrashAlt /></span>
+                      <span style:width="10px" style:display="inline-block">
+                        <FaRegTrashAlt />
+                      </span>
                     </button>
                   </div>
                 </slot>
@@ -118,17 +120,20 @@
       bind:value={inputText}
       placeholder="New Todo"
     />
-    <Button type="submit" disabled={!inputText || disableAdding || !todos}>Add</Button>
+    <Button class="add-todo-button" type="submit" disabled={!inputText || disableAdding || !todos}
+      >Add</Button
+    >
   </form>
 </div>
 
 <style lang="scss">
   .todo-list-wrapper {
-    background: #424242;
+    background-color: #424242;
     border: 1px solid #4b4b4b;
-    .no-items-text {
+    .state-text {
       margin: 0;
       padding: 15px;
+      text-align: center;
     }
     .todo-list {
       max-height: 200px;
