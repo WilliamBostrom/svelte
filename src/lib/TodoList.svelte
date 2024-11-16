@@ -8,8 +8,13 @@
   import Button from './Button.svelte';
 
   afterUpdate(() => {
-    if (autoscroll) listDiv.scrollTo(0, listDivScrollHeight);
-    autoscroll = false;
+    if (scrollOnAdd) {
+      let pos;
+      if (scrollOnAdd === 'top') pos = 0;
+      if (scrollOnAdd === 'bottom') pos = listDivScrollHeight;
+      if (autoscroll) listDiv.scrollTo(0, pos);
+      autoscroll = false;
+    }
   });
 
   export let todos = null;
@@ -17,6 +22,7 @@
   export let isLoading = false;
   export let disableAdding = false;
   export let disabledItems = [];
+  export let scrollOnAdd = undefined;
 
   let prevTodos = todos;
   let inputText = '';
@@ -79,7 +85,7 @@
           <ul>
             {#each todos as todo, index (todo.id)}
               {@const { id, completed, title } = todo}
-              <li>
+              <li animate:flip={{ duration: 300 }}>
                 <slot {todo} {index} {handleToggleTodo}>
                   <div transition:scale|local={{ start: 0.5, duration: 300 }} class:completed>
                     <label>
