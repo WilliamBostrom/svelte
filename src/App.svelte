@@ -1,8 +1,10 @@
 <script>
   import { onMount, tick } from 'svelte';
+  import { fly } from 'svelte/transition';
   import { v4 as uuid } from 'uuid';
   import TodoList from './lib/TodoList.svelte';
-  import { fly } from 'svelte/transition';
+  import spin from './lib/transitions/spin';
+
   let todoList;
   let showList = true;
 
@@ -10,6 +12,8 @@
   let error = null;
   let isLoading = false;
   let isAdding = false;
+  let scrollOnAdd = 'top';
+  let disableAdding;
   let disabledItems = [];
 
   onMount(() => {
@@ -106,14 +110,14 @@
   Show/Hide list
 </label>
 {#if showList}
-  <div style:max-width="400px">
+  <div transition:spin={{ spin: 1, duration: 4000 }} style:max-width="400px">
     <TodoList
       {todos}
       {error}
       {isLoading}
       {disabledItems}
       disableAdding={isAdding}
-      scrollOnadd="top"
+      scrollOnAdd="top"
       bind:this={todoList}
       on:addtodo={handleAddTodo}
       on:removetodo={handleRemoveTodo}

@@ -8,11 +8,12 @@
   import Button from './Button.svelte';
 
   afterUpdate(() => {
-    if (scrollOnAdd) {
-      let pos;
-      if (scrollOnAdd === 'top') pos = 0;
-      if (scrollOnAdd === 'bottom') pos = listDivScrollHeight;
-      if (autoscroll) listDiv.scrollTo(0, pos);
+    if (scrollOnAdd && listDiv) {
+      let pos = 0; // Default till toppen
+      if (scrollOnAdd === 'bottom') pos = listDiv.scrollHeight;
+      if (autoscroll) {
+        listDiv.scrollTo({ top: pos, behavior: 'smooth' });
+      }
       autoscroll = false;
     }
   });
@@ -22,7 +23,7 @@
   export let isLoading = false;
   export let disableAdding = false;
   export let disabledItems = [];
-  export let scrollOnAdd = undefined;
+  export let scrollOnAdd = 'top';
 
   let prevTodos = todos;
   let inputText = '';
@@ -31,7 +32,7 @@
   const dispatch = createEventDispatcher();
 
   $: {
-    autoscroll = todos && prevTodos && todos.length > prevTodos.length;
+    autoscroll = todos && prevTodos && todos?.length > prevTodos.length;
     prevTodos = todos;
   }
 
